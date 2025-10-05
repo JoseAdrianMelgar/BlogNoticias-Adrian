@@ -1,0 +1,32 @@
+@model BlogNoticias.Models.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Registro";
+}
+<h2>Crea una cuenta</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="form-group">
+        @Html.LabelFor(m => m.NombreCompleto)
+        @Html.TextBoxFor(m => m.NombreCompleto)
+        @Html.ValidationMessageFor(m => m.NombreCompleto)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email)
+        @Html.TextBoxFor(m => m.Email)
+        @Html.ValidationMessageFor(m => m.Email)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Password)
+        @Html.PasswordFor(m => m.Password)
+        @Html.ValidationMessageFor(m => m.Password)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ConfirmPassword)
+        @Html.PasswordFor(m => m.ConfirmPassword)
+        @Html.ValidationMessageFor(m => m.ConfirmPassword)
+    </div>
+    <input type="submit" value="Registrarme" />
+}
+<p>¿Ya tienes una cuenta? @Html.ActionLink("Inicia sesión", "Login")</p>

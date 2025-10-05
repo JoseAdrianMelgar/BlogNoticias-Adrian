@@ -1,0 +1,36 @@
+@model IEnumerable<BlogNoticias.Models.Comentario>
+@{
+    ViewBag.Title = "Comentarios";
+}
+<h2>Comentarios</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Contenido</th>
+            <th>Autor</th>
+            <th>Publicación</th>
+            <th>Fecha</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var comentario in Model)
+    {
+        <tr>
+            <td>@Html.Raw(comentario.Contenido.Length > 120 ? comentario.Contenido.Substring(0, 120) + "..." : comentario.Contenido)</td>
+            <td>@comentario.Autor.NombreCompleto</td>
+            <td>@Html.ActionLink(comentario.Publicacion.Titulo, "Details", "Publicaciones", new { id = comentario.PublicacionId }, null)</td>
+            <td>@comentario.FechaComentario.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+            <td>
+                @using (Html.BeginForm("EliminarComentario", "Admin", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("id", comentario.Id)
+                    <input type="submit" class="secondary" value="Eliminar" />
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<a class="button" href="@Url.Action("Index")">Volver al panel</a>

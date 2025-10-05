@@ -1,0 +1,31 @@
+@model IEnumerable<BlogNoticias.Models.Publicacion>
+@{
+    ViewBag.Title = "Publicaciones";
+}
+<h2>Publicaciones</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Categoría</th>
+            <th>Autor</th>
+            <th>Fecha</th>
+            <th>Comentarios</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var publicacion in Model)
+    {
+        <tr>
+            <td>@Html.ActionLink(publicacion.Titulo, "Details", "Publicaciones", new { id = publicacion.Id }, null)</td>
+            <td>@publicacion.Categoria.Nombre</td>
+            <td>@publicacion.Autor.NombreCompleto</td>
+            <td>@publicacion.FechaPublicacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+            <td>@publicacion.Comentarios.Count</td>
+            <td>@Html.ActionLink("Eliminar", "Delete", "Publicaciones", new { id = publicacion.Id }, new { @class = "button secondary" })</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<a class="button" href="@Url.Action("Index")">Volver al panel</a>

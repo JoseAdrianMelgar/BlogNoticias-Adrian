@@ -1,0 +1,42 @@
+@model BlogNoticias.Models.Publicacion
+@{
+    ViewBag.Title = Model.Titulo;
+    var identity = User.Identity as System.Security.Claims.ClaimsIdentity;
+    var esAdmin = identity?.FindFirst("EsAdministrador")?.Value == "True";
+}
+<h2>@Model.Titulo</h2>
+<p class="meta">Por <strong>@Model.Autor.NombreCompleto</strong> en <span class="badge">@Model.Categoria.Nombre</span> - @Model.FechaPublicacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
+<article class="contenido">@Html.Raw(Model.Contenido)</article>
+<div class="acciones">
+    @if (User.Identity.IsAuthenticated && (esAdmin || User.Identity.Name == Model.Autor.Email))
+    {
+        @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "button" })
+        @: 
+        @Html.ActionLink("Eliminar", "Delete", new { id = Model.Id }, new { @class = "button secondary" })
+    }
+</div>
+<section class="comentarios">
+    <h3>Comentarios (@Model.Comentarios.Count)</h3>
+    @if (TempData["ComentarioError"] != null)
+    {
+        <div class="validation-summary-errors">@TempData["ComentarioError"]</div>
+    }
+    @Html.Partial("_Comentarios", Model.Comentarios.OrderByDescending(c => c.FechaComentario))
+    @if (User.Identity.IsAuthenticated)
+    {
+        using (Html.BeginForm("Create", "Comentarios", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("publicacionId", Model.Id)
+            <div class="form-group">
+                <label for="contenido">Nuevo comentario</label>
+                <textarea id="contenido" name="contenido" rows="4"></textarea>
+            </div>
+            <input type="submit" value="Comentar" />
+        }
+    }
+    else
+    {
+        <p>Debes @Html.ActionLink("iniciar sesión", "Login", "Account", new { returnUrl = Url.Action("Details", new { id = Model.Id }) }, null) para comentar.</p>
+    }
+</section>

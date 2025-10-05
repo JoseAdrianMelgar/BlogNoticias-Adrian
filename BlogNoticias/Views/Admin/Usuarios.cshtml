@@ -1,0 +1,37 @@
+@model IEnumerable<BlogNoticias.Models.Usuario>
+@{
+    ViewBag.Title = "Administrar usuarios";
+}
+<h2>Usuarios registrados</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Fecha de registro</th>
+            <th>Rol</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var usuario in Model)
+    {
+        <tr>
+            <td>@usuario.NombreCompleto</td>
+            <td>@usuario.Email</td>
+            <td>@usuario.FechaRegistro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+            <td>@(usuario.EsAdministrador ? "Administrador" : "Autor")</td>
+            <td>
+                @using (Html.BeginForm("AlternarAdministrador", "Admin", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("id", usuario.Id)
+                    var texto = usuario.EsAdministrador ? "Quitar administrador" : "Convertir en administrador";
+                    <input type="submit" class="secondary" value="@texto" />
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<a class="button" href="@Url.Action("Index")">Volver al panel</a>
