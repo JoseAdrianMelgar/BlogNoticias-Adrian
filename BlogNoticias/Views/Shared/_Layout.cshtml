@@ -1,0 +1,57 @@
+@using System.Security.Claims
+@{
+    var isAuthenticated = Context.User?.Identity?.IsAuthenticated ?? false;
+    var userName = isAuthenticated ? Context.User.Identity.Name : "";
+    var isAdmin = false;
+    if (isAuthenticated)
+    {
+        var identity = Context.User.Identity as ClaimsIdentity;
+        var adminClaim = identity?.FindFirst("EsAdministrador");
+        bool.TryParse(adminClaim?.Value, out isAdmin);
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - BlogNoticias</title>
+    <link href="~/Content/Site.css" rel="stylesheet" />
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>BlogNoticias</h1>
+            <nav>
+                <ul>
+                    <li>@Html.ActionLink("Inicio", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Publicaciones", "Index", "Publicaciones")</li>
+                    @if (isAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Crear publicación", "Create", "Publicaciones")</li>
+                        @if (isAdmin)
+                        {
+                            <li>@Html.ActionLink("Administración", "Index", "Admin")</li>
+                        }
+                        <li class="auth">Hola, @userName</li>
+                        <li>@Html.ActionLink("Cerrar sesión", "Logout", "Account")</li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Registrarse", "Register", "Account")</li>
+                        <li>@Html.ActionLink("Iniciar sesión", "Login", "Account")</li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main class="container">
+        @RenderBody()
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; @DateTime.Now.Year - BlogNoticias</p>
+        </div>
+    </footer>
+    <script src="~/Scripts/site.js"></script>
+</body>
+</html>

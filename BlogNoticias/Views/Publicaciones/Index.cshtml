@@ -1,0 +1,64 @@
+@model IEnumerable<BlogNoticias.Models.Publicacion>
+@{
+    ViewBag.Title = "Publicaciones";
+    var categorias = ViewBag.Categorias as IEnumerable<BlogNoticias.Models.Categoria>;
+    var identity = User.Identity as System.Security.Claims.ClaimsIdentity;
+    var esAdmin = identity?.FindFirst("EsAdministrador")?.Value == "True";
+}
+<h2>Publicaciones</h2>
+<div class="filtros">
+    <form method="get">
+        <label for="categoriaId">Filtrar por categoría:</label>
+        <select name="categoriaId" id="categoriaId" onchange="this.form.submit()">
+            <option value="">Todas</option>
+            @if (categorias != null)
+            {
+                foreach (var categoria in categorias)
+                {
+                    <option value="@categoria.Id" @(Request["categoriaId"] == categoria.Id.ToString() ? "selected" : "")>@categoria.Nombre</option>
+                }
+            }
+        </select>
+    </form>
+</div>
+@if (!Model.Any())
+{
+    <p>No existen publicaciones aún.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Categoría</th>
+                <th>Autor</th>
+                <th>Fecha</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.ActionLink(item.Titulo, "Details", new { id = item.Id })</td>
+                <td>@item.Categoria.Nombre</td>
+                <td>@item.Autor.NombreCompleto</td>
+                <td>@item.FechaPublicacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    @if (User.Identity.IsAuthenticated && (esAdmin || User.Identity.Name == item.Autor.Email))
+                    {
+                        @Html.ActionLink("Editar", "Edit", new { id = item.Id })
+                        @: |
+                        @Html.ActionLink("Eliminar", "Delete", new { id = item.Id })
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <a class="button" href="@Url.Action("Create")">Nueva publicación</a>
+}

@@ -1,0 +1,21 @@
+@{
+    ViewBag.Title = "Panel de administración";
+}
+<h2>Panel de administración</h2>
+<div class="grid">
+    <div class="card">
+        <h3>Usuarios</h3>
+        <p>Total: <strong>@ViewBag.TotalUsuarios</strong></p>
+        <a class="button" href="@Url.Action("Usuarios")">Gestionar usuarios</a>
+    </div>
+    <div class="card">
+        <h3>Publicaciones</h3>
+        <p>Total: <strong>@ViewBag.TotalPublicaciones</strong></p>
+        <a class="button" href="@Url.Action("Publicaciones")">Revisar publicaciones</a>
+    </div>
+    <div class="card">
+        <h3>Comentarios</h3>
+        <p>Total: <strong>@ViewBag.TotalComentarios</strong></p>
+        <a class="button" href="@Url.Action("Comentarios")">Moderar comentarios</a>
+    </div>
+</div>

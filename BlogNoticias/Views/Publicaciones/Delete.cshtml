@@ -1,0 +1,16 @@
+@model BlogNoticias.Models.Publicacion
+@{
+    ViewBag.Title = "Eliminar publicación";
+}
+<h2>¿Seguro que deseas eliminar esta publicación?</h2>
+<div class="resumen">
+    <h3>@Model.Titulo</h3>
+    <p>@Model.Categoria.Nombre - @Model.FechaPublicacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
+    <p>@Html.Raw(Model.Contenido)</p>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <input type="submit" value="Eliminar" class="button" />
+    @Html.ActionLink("Cancelar", "Details", new { id = Model.Id }, new { @class = "button secondary" })
+}

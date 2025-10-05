@@ -1,0 +1,38 @@
+@model IEnumerable<BlogNoticias.Models.Publicacion>
+@{
+    ViewBag.Title = "Inicio";
+}
+<section class="hero">
+    <h2>Bienvenido a BlogNoticias</h2>
+    <p>La plataforma para publicar y administrar noticias por categorías.</p>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <a class="button" href="@Url.Action("Create", "Publicaciones")">Crear nueva publicación</a>
+    }
+    else
+    {
+        <a class="button" href="@Url.Action("Register", "Account")">Crea tu cuenta</a>
+    }
+</section>
+
+<section class="publicaciones-recientes">
+    <h3>Últimas publicaciones</h3>
+    @if (!Model.Any())
+    {
+        <p>No hay publicaciones todavía. ¡Sé el primero en compartir una noticia!</p>
+    }
+    else
+    {
+        <div class="grid">
+            @foreach (var publicacion in Model)
+            {
+                <article class="card">
+                    <h4>@Html.ActionLink(publicacion.Titulo, "Details", "Publicaciones", new { id = publicacion.Id }, null)</h4>
+                    <p class="meta">Por @publicacion.Autor.NombreCompleto en @publicacion.Categoria.Nombre - @publicacion.FechaPublicacion.ToLocalTime().ToString("dd/MM/yyyy")</p>
+                    <p>@Html.Raw(publicacion.Contenido.Length > 200 ? publicacion.Contenido.Substring(0, 200) + "..." : publicacion.Contenido)</p>
+                    <a class="button secondary" href="@Url.Action("Details", "Publicaciones", new { id = publicacion.Id })">Leer más</a>
+                </article>
+            }
+        </div>
+    }
+</section>

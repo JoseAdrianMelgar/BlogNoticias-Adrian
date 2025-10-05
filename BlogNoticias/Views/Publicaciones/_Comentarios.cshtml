@@ -1,0 +1,30 @@
+@model IEnumerable<BlogNoticias.Models.Comentario>
+@{
+    var identity = User.Identity as System.Security.Claims.ClaimsIdentity;
+    var esAdmin = identity?.FindFirst("EsAdministrador")?.Value == "True";
+}
+@if (Model == null || !Model.Any())
+{
+    <p>No hay comentarios todavía.</p>
+}
+else
+{
+    <ul class="lista-comentarios">
+        @foreach (var comentario in Model)
+        {
+            <li>
+                <p class="meta"><strong>@comentario.Autor.NombreCompleto</strong> - @comentario.FechaComentario.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
+                <div class="texto">@Html.Raw(comentario.Contenido)</div>
+                @if (User.Identity.IsAuthenticated && (esAdmin || User.Identity.Name == comentario.Autor.Email || User.Identity.Name == comentario.Publicacion.Autor.Email))
+                {
+                    using (Html.BeginForm("Delete", "Comentarios", FormMethod.Post, new { @class = "inline-form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("id", comentario.Id)
+                        <input type="submit" class="secondary" value="Eliminar" />
+                    }
+                }
+            </li>
+        }
+    </ul>
+}
