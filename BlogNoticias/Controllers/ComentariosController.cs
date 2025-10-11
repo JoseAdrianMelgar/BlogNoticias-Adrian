@@ -5,6 +5,7 @@ using System.Net;
 using System.Web.Mvc;
 using BlogNoticias.DAL;
 using BlogNoticias.Models;
+using Microsoft.AspNet.Identity;
 
 namespace BlogNoticias.Controllers
 {
@@ -86,8 +87,8 @@ namespace BlogNoticias.Controllers
                 return null;
             }
 
-            var email = User.Identity.Name;
-            return _db.Usuarios.SingleOrDefault(u => u.Email == email);
+            var userId = User.Identity.GetUserId<int>();
+            return _db.Usuarios.SingleOrDefault(u => u.Id == userId);
         }
 
         protected override void Dispose(bool disposing)
