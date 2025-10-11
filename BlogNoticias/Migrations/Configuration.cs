@@ -1,9 +1,10 @@
 using System.Data.Entity.Migrations;
 using BlogNoticias.DAL;
+using BlogNoticias;
 using BlogNoticias.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Linq;
-using System.Web.Helpers;
 
 namespace BlogNoticias.Migrations
 {
@@ -27,15 +28,18 @@ namespace BlogNoticias.Migrations
 
             if (!context.Usuarios.Any())
             {
+                var userManager = new ApplicationUserManager(new UsuarioStore(context));
                 var admin = new Usuario
                 {
-                    NombreCompleto = "Administrador",
+                    UserName = "admin@blognoticias.com",
                     Email = "admin@blognoticias.com",
-                    PasswordHash = Crypto.HashPassword("Admin123$"),
+                    NombreCompleto = "Administrador",
                     FechaRegistro = DateTime.UtcNow,
-                    EsAdministrador = true
+                    EsAdministrador = true,
+                    EmailConfirmed = true
                 };
-                context.Usuarios.Add(admin);
+
+                userManager.Create(admin, "Admin123$");
             }
         }
     }

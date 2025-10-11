@@ -33,7 +33,13 @@
                             <li>@Html.ActionLink("Administración", "Index", "Admin")</li>
                         }
                         <li class="auth">Hola, @userName</li>
-                        <li>@Html.ActionLink("Cerrar sesión", "Logout", "Account")</li>
+                        <li>
+                            @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { @class = "inline-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="link-button">Cerrar sesión</button>
+                            }
+                        </li>
                     }
                     else
                     {

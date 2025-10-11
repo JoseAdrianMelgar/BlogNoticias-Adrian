@@ -1,18 +1,42 @@
 using System;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
-using System.Web.Helpers;
 using System.Web.Mvc;
-using System.Web.Security;
-using BlogNoticias.DAL;
 using BlogNoticias.Models;
 using BlogNoticias.Models.ViewModels;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 
 namespace BlogNoticias.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
-        private readonly BlogContext _db = new BlogContext();
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+
+        public AccountController()
+        {
+        }
+
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get => _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            private set => _signInManager = value;
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get => _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            private set => _userManager = value;
+        }
 
         [AllowAnonymous]
         public ActionResult Register()
@@ -23,34 +47,31 @@ namespace BlogNoticias.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var emailExiste = _db.Usuarios.Any(u => u.Email == model.Email);
-            if (emailExiste)
-            {
-                ModelState.AddModelError("Email", "El correo ya está registrado.");
-                return View(model);
-            }
-
             var usuario = new Usuario
             {
-                NombreCompleto = model.NombreCompleto,
+                UserName = model.Email,
                 Email = model.Email,
-                PasswordHash = Crypto.HashPassword(model.Password),
+                NombreCompleto = model.NombreCompleto,
                 FechaRegistro = DateTime.UtcNow,
                 EsAdministrador = false
             };
 
-            _db.Usuarios.Add(usuario);
-            _db.SaveChanges();
+            var result = await UserManager.CreateAsync(usuario, model.Password);
+            if (result.Succeeded)
+            {
+                await SignInManager.SignInAsync(usuario, isPersistent: false, rememberBrowser: false);
+                return RedirectToAction("Index", "Home");
+            }
 
-            SignInUser(usuario, true);
-            return RedirectToAction("Index", "Home");
+            AddErrors(result);
+            return View(model);
         }
 
         [AllowAnonymous]
@@ -63,73 +84,59 @@ namespace BlogNoticias.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var usuario = _db.Usuarios.SingleOrDefault(u => u.Email == model.Email);
-            if (usuario == null || !Crypto.VerifyHashedPassword(usuario.PasswordHash, model.Password))
+            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            switch (result)
             {
-                ModelState.AddModelError("", "Credenciales inválidas.");
-                return View(model);
+                case SignInStatus.Success:
+                    if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+
+                    return RedirectToAction("Index", "Home");
+                case SignInStatus.LockedOut:
+                    ModelState.AddModelError("", "La cuenta se encuentra bloqueada.");
+                    return View(model);
+                default:
+                    ModelState.AddModelError("", "Credenciales inválidas.");
+                    return View(model);
             }
-
-            SignInUser(usuario, model.RememberMe);
-
-            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-
-            return RedirectToAction("Index", "Home");
         }
 
-        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Logout()
         {
-            FormsAuthentication.SignOut();
-            var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, string.Empty)
-            {
-                Expires = DateTime.UtcNow.AddDays(-1)
-            };
-            Response.Cookies.Add(cookie);
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie);
             return RedirectToAction("Index", "Home");
-        }
-
-        private void SignInUser(Usuario usuario, bool rememberMe)
-        {
-            var ticket = new FormsAuthenticationTicket(
-                1,
-                usuario.Email,
-                DateTime.Now,
-                DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes),
-                rememberMe,
-                usuario.EsAdministrador.ToString());
-
-            var encrypted = FormsAuthentication.Encrypt(ticket);
-            var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encrypted)
-            {
-                HttpOnly = true
-            };
-
-            if (rememberMe)
-            {
-                cookie.Expires = ticket.Expiration;
-            }
-
-            Response.Cookies.Add(cookie);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _db.Dispose();
+                _userManager?.Dispose();
+                _signInManager?.Dispose();
             }
+
             base.Dispose(disposing);
+        }
+
+        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
         }
     }
 }

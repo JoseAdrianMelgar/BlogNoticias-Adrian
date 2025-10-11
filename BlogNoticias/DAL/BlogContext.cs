@@ -1,15 +1,21 @@
 using System.Data.Entity;
 using BlogNoticias.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace BlogNoticias.DAL
 {
-    public class BlogContext : DbContext
+    public class BlogContext : IdentityDbContext<Usuario, Rol, int, UsuarioLogin, UsuarioRole, UsuarioClaim>
     {
-        public BlogContext() : base("BlogContext")
+        public BlogContext() : base("DefaultConnection")
         {
         }
 
-        public DbSet<Usuario> Usuarios { get; set; }
+        public static BlogContext Create()
+        {
+            return new BlogContext();
+        }
+
+        public IDbSet<Usuario> Usuarios => Users;
 
         public DbSet<Publicacion> Publicaciones { get; set; }
 
@@ -20,6 +26,12 @@ namespace BlogNoticias.DAL
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Usuario>().ToTable("Usuarios");
+            modelBuilder.Entity<Rol>().ToTable("Roles");
+            modelBuilder.Entity<UsuarioRole>().ToTable("UsuarioRoles");
+            modelBuilder.Entity<UsuarioLogin>().ToTable("UsuarioLogins");
+            modelBuilder.Entity<UsuarioClaim>().ToTable("UsuarioClaims");
 
             modelBuilder.Entity<Usuario>()
                 .HasMany(u => u.Publicaciones)
@@ -37,6 +49,15 @@ namespace BlogNoticias.DAL
                 .HasMany(p => p.Comentarios)
                 .WithRequired(c => c.Publicacion)
                 .HasForeignKey(c => c.PublicacionId);
+
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.NombreCompleto)
+                .IsRequired()
+                .HasMaxLength(120);
+
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.Email)
+                .HasMaxLength(256);
         }
     }
 }

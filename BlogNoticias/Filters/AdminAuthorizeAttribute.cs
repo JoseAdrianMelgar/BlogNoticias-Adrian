@@ -1,7 +1,9 @@
 using System.Linq;
 using System.Net;
+using System.Web;
 using System.Web.Mvc;
 using BlogNoticias.DAL;
+using Microsoft.AspNet.Identity;
 
 namespace BlogNoticias.Filters
 {
@@ -14,10 +16,15 @@ namespace BlogNoticias.Filters
                 return false;
             }
 
-            var email = httpContext.User.Identity.Name;
+            var userId = httpContext.User.Identity.GetUserId<int>();
+            if (userId <= 0)
+            {
+                return false;
+            }
+
             using (var db = new BlogContext())
             {
-                var usuario = db.Usuarios.SingleOrDefault(u => u.Email == email);
+                var usuario = db.Usuarios.SingleOrDefault(u => u.Id == userId);
                 return usuario != null && usuario.EsAdministrador;
             }
         }
