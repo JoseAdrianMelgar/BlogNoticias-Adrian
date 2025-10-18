@@ -1,0 +1,37 @@
+@model IEnumerable<SistemaInventario.Models.Producto>
+@{
+    ViewBag.Title = "Productos con stock bajo";
+}
+<h1 class="mb-4">Productos con stock bajo</h1>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Todos los productos tienen stock suficiente.</div>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Nombre</th>
+                <th>Proveedor</th>
+                <th>Stock actual</th>
+                <th>Stock mínimo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var producto in Model)
+        {
+            <tr class="table-danger">
+                <td>@producto.Nombre</td>
+                <td>@producto.Proveedor?.Nombre</td>
+                <td>@producto.StockActual</td>
+                <td>@producto.StockMinimo</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" href="@Url.Action("Create", "Movimientos", new { tipo = SistemaInventario.Models.TipoMovimiento.Entrada, productoId = producto.ProductoId })">Registrar entrada</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

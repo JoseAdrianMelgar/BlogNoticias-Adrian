@@ -1,0 +1,45 @@
+@model SistemaInventario.Models.Proveedor
+@{
+    ViewBag.Title = "Nuevo proveedor";
+}
+<h1>Nuevo proveedor</h1>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.Nombre, htmlAttributes: new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.Telefono, htmlAttributes: new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Telefono, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.Direccion, htmlAttributes: new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Direccion, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Direccion, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-check form-switch">
+                        @Html.CheckBoxFor(model => model.Activo, new { @class = "form-check-input" })
+                        @Html.LabelFor(model => model.Activo, htmlAttributes: new { @class = "form-check-label" })
+                    </div>
+                </div>
+            </div>
+            <div>
+                <a class="btn btn-secondary" href="@Url.Action("Index")">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+}

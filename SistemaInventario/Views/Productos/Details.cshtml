@@ -1,0 +1,29 @@
+@model SistemaInventario.Models.Producto
+@{
+    ViewBag.Title = "Detalles del producto";
+}
+<h1>Detalles del producto</h1>
+<div class="card mb-3">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Nombre</dt>
+            <dd class="col-sm-9">@Model.Nombre</dd>
+            <dt class="col-sm-3">Descripción</dt>
+            <dd class="col-sm-9">@Model.Descripcion</dd>
+            <dt class="col-sm-3">Precio costo</dt>
+            <dd class="col-sm-9">@Model.PrecioCosto.ToString("C2")</dd>
+            <dt class="col-sm-3">Precio venta</dt>
+            <dd class="col-sm-9">@Model.PrecioVenta.ToString("C2")</dd>
+            <dt class="col-sm-3">Stock actual</dt>
+            <dd class="col-sm-9">@Model.StockActual</dd>
+            <dt class="col-sm-3">Stock mínimo</dt>
+            <dd class="col-sm-9">@Model.StockMinimo</dd>
+            <dt class="col-sm-3">Proveedor</dt>
+            <dd class="col-sm-9">@Model.Proveedor?.Nombre</dd>
+            <dt class="col-sm-3">Activo</dt>
+            <dd class="col-sm-9">@(Model.Activo ? "Sí" : "No")</dd>
+        </dl>
+    </div>
+</div>
+<a class="btn btn-secondary" href="@Url.Action("Index")">Volver</a>
+<a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.ProductoId })">Editar</a>

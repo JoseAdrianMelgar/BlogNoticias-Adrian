@@ -1,0 +1,36 @@
+@{
+    ViewBag.Title = "Inicio";
+}
+<div class="text-center py-5">
+    <h1 class="display-5">Bienvenido al Sistema de Inventario</h1>
+    <p class="lead">Administre productos, proveedores y movimientos de inventario en un solo lugar.</p>
+    <div class="row mt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Productos</h5>
+                    <p class="card-text">Registre, edite y controle el stock de sus productos.</p>
+                    <a class="btn btn-outline-primary" href="@Url.Action("Index", "Productos")">Ir a productos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Movimientos</h5>
+                    <p class="card-text">Registre entradas y salidas con validaciones automáticas.</p>
+                    <a class="btn btn-outline-primary" href="@Url.Action("Create", "Movimientos")">Nuevo movimiento</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Reportes</h5>
+                    <p class="card-text">Consulte reportes dinámicos y exporte a CSV.</p>
+                    <a class="btn btn-outline-primary" href="@Url.Action("Inventario", "Reportes")">Ver reportes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+@model IEnumerable<SistemaInventario.Models.Proveedor>
+@{
+    ViewBag.Title = "Proveedores";
+}
+<h1 class="mb-4">Proveedores</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <form class="d-flex" method="get">
+        <input type="text" name="buscar" value="@Request["buscar"]" class="form-control me-2" placeholder="Buscar por nombre" />
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <a class="btn btn-success" href="@Url.Action("Create")">Nuevo proveedor</a>
+</div>
+<table class="table table-striped table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Activo</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Nombre</td>
+            <td>@item.Telefono</td>
+            <td>@item.Email</td>
+            <td>@(item.Activo ? "Sí" : "No")</td>
+            <td class="text-end">
+                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Details", new { id = item.ProveedorId })">Detalles</a>
+                <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Edit", new { id = item.ProveedorId })">Editar</a>
+                <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Delete", new { id = item.ProveedorId })">Eliminar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+@if (!Model.Any())
+{
+    <p class="text-muted">No hay proveedores registrados.</p>
+}

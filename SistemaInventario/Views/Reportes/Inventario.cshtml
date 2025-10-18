@@ -1,0 +1,128 @@
+@model SistemaInventario.ViewModels.ReporteInventarioViewModel
+@{
+    ViewBag.Title = "Reporte de inventario";
+}
+<h1 class="mb-4">Reporte de inventario</h1>
+<div class="card mb-3">
+    <div class="card-body">
+        @using (Html.BeginForm("Inventario", "Reportes", FormMethod.Get))
+        {
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    @Html.Label("Fecha desde", htmlAttributes: new { @class = "form-label" })
+                    <input class="form-control" type="date" name="FechaDesde" value="@(Model.Filtro.FechaDesde?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-md-3">
+                    @Html.Label("Fecha hasta", htmlAttributes: new { @class = "form-label" })
+                    <input class="form-control" type="date" name="FechaHasta" value="@(Model.Filtro.FechaHasta?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-md-3">
+                    @Html.Label("Producto", htmlAttributes: new { @class = "form-label" })
+                    @Html.DropDownList("ProductoId", Model.Productos, "Todos", new { @class = "form-select" })
+                </div>
+                <div class="col-md-3">
+                    @Html.Label("Proveedor", htmlAttributes: new { @class = "form-label" })
+                    @Html.DropDownList("ProveedorId", Model.Proveedores, "Todos", new { @class = "form-select" })
+                </div>
+            </div>
+            <div class="row g-3 align-items-end mt-2">
+                <div class="col-md-3">
+                    @Html.Label("Agrupar por", htmlAttributes: new { @class = "form-label" })
+                    <select class="form-select" name="AgruparPor">
+                        <option value="dia" @(Model.Filtro.AgruparPor == "dia" ? "selected" : "")>Día</option>
+                        <option value="producto" @(Model.Filtro.AgruparPor == "producto" ? "selected" : "")>Producto</option>
+                    </select>
+                </div>
+                <div class="col-md-9 text-end">
+                    <button type="submit" class="btn btn-primary me-2">Generar</button>
+                    <a class="btn btn-success" href="@Url.Action("ExportarCsv", new { fechaDesde = Model.Filtro.FechaDesde?.ToString("yyyy-MM-dd"), fechaHasta = Model.Filtro.FechaHasta?.ToString("yyyy-MM-dd"), productoId = Model.Filtro.ProductoId, proveedorId = Model.Filtro.ProveedorId, agruparPor = Model.Filtro.AgruparPor })">Exportar CSV</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Totales</h5>
+                <p><strong>Total entradas:</strong> @Model.TotalEntradas</p>
+                <p><strong>Total salidas:</strong> @Model.TotalSalidas</p>
+                <p><strong>Balance:</strong> @(Model.TotalEntradas - Model.TotalSalidas)</p>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body table-responsive">
+                <h5 class="card-title">Movimientos</h5>
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Producto</th>
+                            <th>Tipo</th>
+                            <th>Proveedor</th>
+                            <th>Cantidad</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var movimiento in Model.Movimientos)
+                    {
+                        <tr>
+                            <td>@movimiento.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td>@movimiento.Producto?.Nombre</td>
+                            <td>@movimiento.Tipo</td>
+                            <td>@movimiento.Proveedor?.Nombre</td>
+                            <td>@movimiento.Cantidad</td>
+                            <td>@movimiento.Observaciones</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                @if (!Model.Movimientos.Any())
+                {
+                    <p class="text-muted">No hay movimientos para los filtros seleccionados.</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">@Model.ChartTitle</h5>
+                <canvas id="inventarioChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        (function () {
+            var labels = @Html.Raw(Model.ChartLabelsJson ?? "[]");
+            var data = @Html.Raw(Model.ChartDataJson ?? "[]");
+            var ctx = document.getElementById('inventarioChart');
+            if (ctx && labels.length > 0) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Cantidad',
+                            data: data,
+                            backgroundColor: data.map(function (value) { return value >= 0 ? 'rgba(25, 135, 84, 0.7)' : 'rgba(220, 53, 69, 0.7)'; })
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        })();
+    </script>
+}

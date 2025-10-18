@@ -1,0 +1,15 @@
+@model SistemaInventario.Models.Proveedor
+@{
+    ViewBag.Title = "Eliminar proveedor";
+}
+<h1>Eliminar proveedor</h1>
+<div class="alert alert-warning">
+    <p>¿Está seguro de eliminar al proveedor <strong>@Model.Nombre</strong>?</p>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ProveedorId)
+    <a class="btn btn-secondary" href="@Url.Action("Index")">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+}
