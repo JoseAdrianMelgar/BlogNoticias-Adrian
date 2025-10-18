@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - Sistema de Inventario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/Content/Site.css" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">SistemaInventario</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Alternar navegación">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Home")">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Productos")">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Proveedores")">Proveedores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Movimientos")">Movimientos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Inventario", "Reportes")">Reportes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("StockBajo", "Productos")">Stock Bajo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Acerca", "Home")">Acerca de</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Mensaje"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        }
+        @RenderBody()
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-eKhayi8LEQwp4NKxM7CF1z8tuQpqtF5pPId6m60Cc94=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+kT9cZ8G5D2Jk9g+11FXGe0XEt3G5UpiRaY1oCbcnZ6+QcmGeXjrP9K/Y3f9c8" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js" integrity="sha384-J6zISwH0z7dxyzKDn5XxhxL7sRKqzZo4PM5XgS5aXoaZySUdkGFUTkOcJCIZy9FH" crossorigin="anonymous"></script>
+    <script src="~/Scripts/site.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

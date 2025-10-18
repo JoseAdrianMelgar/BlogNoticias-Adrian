@@ -1,0 +1,20 @@
+body {
+    padding-top: 60px;
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+.table-danger td,
+.table-danger th {
+    background-color: rgba(220, 53, 69, 0.15) !important;
+}
+
+.card-title {
+    font-weight: 600;
+}
+
+.alert {
+    margin-top: 1rem;
+}

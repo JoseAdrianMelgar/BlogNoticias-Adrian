@@ -1,0 +1,73 @@
+@model SistemaInventario.Models.Producto
+@{
+    ViewBag.Title = "Editar producto";
+}
+<h1>Editar producto</h1>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ProductoId)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.Nombre, htmlAttributes: new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.Descripcion, htmlAttributes: new { @class = "form-label" })
+                        @Html.TextAreaFor(model => model.Descripcion, new { @class = "form-control", rows = 3 })
+                        @Html.ValidationMessageFor(model => model.Descripcion, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.PrecioCosto, htmlAttributes: new { @class = "form-label" })
+                                @Html.EditorFor(model => model.PrecioCosto, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.PrecioCosto, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.PrecioVenta, htmlAttributes: new { @class = "form-label" })
+                                @Html.EditorFor(model => model.PrecioVenta, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.PrecioVenta, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.StockActual, htmlAttributes: new { @class = "form-label" })
+                                @Html.EditorFor(model => model.StockActual, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.StockActual, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                @Html.LabelFor(model => model.StockMinimo, htmlAttributes: new { @class = "form-label" })
+                                @Html.EditorFor(model => model.StockMinimo, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.StockMinimo, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.ProveedorId, htmlAttributes: new { @class = "form-label" })
+                        @Html.DropDownList("ProveedorId", null, new { @class = "form-select" })
+                        @Html.ValidationMessageFor(model => model.ProveedorId, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-check form-switch">
+                        @Html.CheckBoxFor(model => model.Activo, new { @class = "form-check-input" })
+                        @Html.LabelFor(model => model.Activo, htmlAttributes: new { @class = "form-check-label" })
+                    </div>
+                </div>
+            </div>
+            <div>
+                <a class="btn btn-secondary" href="@Url.Action("Index")">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+}

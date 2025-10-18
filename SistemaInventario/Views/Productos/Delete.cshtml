@@ -1,0 +1,15 @@
+@model SistemaInventario.Models.Producto
+@{
+    ViewBag.Title = "Eliminar producto";
+}
+<h1>Eliminar producto</h1>
+<div class="alert alert-warning">
+    <p>¿Está seguro que desea eliminar el producto <strong>@Model.Nombre</strong>?</p>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ProductoId)
+    <a class="btn btn-secondary" href="@Url.Action("Index")">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+}
